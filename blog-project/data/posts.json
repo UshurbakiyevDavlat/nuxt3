@@ -1,0 +1,17 @@
+[
+    {
+      "slug": "first-post",
+      "title": "My First Blog Post",
+      "content": "This is the content of my first blog post. Welcome to the blog!",
+      "author": "Author A",
+      "date": "2024-11-01"
+    },
+    {
+      "slug": "second-post",
+      "title": "Another Blog Post",
+      "content": "Here’s some more content in another post!",
+      "author": "Author B",
+      "date": "2024-11-02"
+    }
+  ]
+  
