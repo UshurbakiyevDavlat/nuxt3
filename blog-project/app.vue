@@ -1,18 +1,29 @@
 <template>
   <div :class="theme">
-    <header>
-      <nav>
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <nuxt-link to="/">My Blog</nuxt-link>
+      </div>
+      <nav class="nav" :class="{ open: menuOpen }">
         <nuxt-link to="/">Home</nuxt-link>
         <nuxt-link to="/about">About</nuxt-link>
       </nav>
-      <button @click="toggleTheme">Toggle Theme</button>
+      <button class="menu-toggle" @click="toggleMenu">
+        ☰
+      </button>
     </header>
 
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" @click="toggleTheme">Toggle Theme</button>
+
+    <!-- Main Content -->
     <main>
       <NuxtPage />
     </main>
 
-    <footer :class="theme">
+    <!-- Footer -->
+    <footer class="footer">
       <p>© 2024 My Blog</p>
     </footer>
   </div>
@@ -21,109 +32,144 @@
 <script setup>
 import { ref } from 'vue'
 
+// Theme state
 const theme = ref('dark')
 
+// Menu state for responsive nav
+const menuOpen = ref(false)
+
+// Toggle the theme
 function toggleTheme() {
   theme.value = theme.value === 'dark' ? 'light' : 'dark'
 }
+
+// Toggle the menu
+function toggleMenu() {
+  menuOpen.value = !menuOpen.value
+}
 </script>
 
-<style>
-/* Theme styles to set background and text color based on the selected theme */
+<style scoped>
+/* General Styles */
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Theme Styles */
 .dark {
-  background-color: #333; /* Dark gray background for dark theme */
-  color: white; /* White text for dark theme */
+  background-color: #1e1e1e;
+  color: #f5f5f5;
 }
 
 .light {
-  background-color: #f9f9f9; /* Light background for light theme */
-  color: #333; /* Dark text for light theme */
+  background-color: #f5f5f5;
+  color: #1e1e1e;
 }
 
-/* Header and Navigation styling */
-header {
-  display: flex; /* Flex layout for horizontal alignment */
-  justify-content: space-between; /* Space between nav links and button */
-  align-items: center; /* Center items vertically */
-  padding: 1em; /* Padding around header */
-  background-color: inherit; /* Inherit background from theme */
-  color: inherit; /* Inherit text color from theme */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em 2em;
+  background-color: inherit;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Navigation links container */
-nav {
-  display: flex; /* Horizontal alignment for links */
-  gap: 1em; /* Space between each link */
+.logo {
+  font-size: 1.5em;
+  font-weight: bold;
 }
 
-/* Styling for individual navigation links */
-nav a {
-  color: inherit; /* Inherit color based on theme */
-  text-decoration: none; /* Remove underline */
-  font-weight: bold; /* Bold text for emphasis */
-  transition: color 0.3s; /* Smooth color change on hover */
+.nav {
+  display: flex;
+  gap: 1.5em;
 }
 
-/* Hover effect for navigation links */
-nav a:hover {
-  color: #007acc; /* Change to blue on hover */
+.nav a {
+  text-decoration: none;
+  color: inherit;
+  font-weight: bold;
+  transition: color 0.3s;
 }
 
-/* Theme toggle button styling */
-button {
-  padding: 0.5em 1em; /* Padding for clickable area */
-  border: none; /* Remove default border */
-  border-radius: 5px; /* Rounded corners for a modern look */
-  cursor: pointer; /* Pointer cursor on hover */
-  font-weight: bold; /* Bold font for readability */
-  background-color: inherit; /* Inherit background color from theme */
-  color: inherit; /* Inherit text color from theme */
-  transition: background-color 0.3s, color 0.3s; /* Smooth hover effect */
+.nav a:hover {
+  color: #007acc;
 }
 
-/* Hover effect for the toggle button */
-button:hover {
-  background-color: rgba(0, 0, 0, 0.1); /* Light shade on hover */
+/* Menu Toggle (Hamburger) */
+.menu-toggle {
+  display: none;
+  font-size: 1.5em;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
 }
 
-/* Main content styling */
+.nav.open {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  background-color: inherit;
+  padding: 1em;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  margin: 1em 2em;
+  padding: 0.5em 1.5em;
+  border: 1px solid #ccc;
+  background-color: inherit;
+  color: inherit;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.theme-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Main Content */
 main {
-  padding: 2em; /* Padding for spacing */
-  min-height: calc(100vh - 160px); /* Ensure main content fills available space */
-  box-sizing: border-box; /* Include padding in width and height calculations */
+  padding: 2em;
+  min-height: calc(100vh - 200px); /* Adjust for header and footer */
 }
 
-/* Footer styling */
-footer {
-  padding: 1em; /* Padding for spacing */
-  text-align: center; /* Center-align footer text */
-  background-color: inherit; /* Inherit background color from theme */
-  color: inherit; /* Inherit text color from theme */
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  position: fixed; /* Fix footer at the bottom */
-  bottom: 0; /* Align to the bottom of the viewport */
-  width: 100%; /* Full width to span across the screen */
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 1.5em;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: inherit;
+  color: inherit;
 }
 
-/* Responsive adjustments for small screens */
-@media (max-width: 600px) {
-  /* Stack header and footer elements vertically on small screens */
-  header, footer {
-    flex-direction: column; /* Vertical alignment */
-    padding: 1em 0.5em; /* Adjust padding */
-    text-align: center; /* Center-align text */
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .nav {
+    display: none;
   }
 
-  /* Stack navigation links vertically on small screens */
-  nav {
-    flex-direction: column; /* Vertical alignment */
-    gap: 0.5em; /* Reduced gap for spacing */
+  .menu-toggle {
+    display: block;
   }
 
-  /* Add margin to separate button from nav links */
-  button {
-    margin-top: 0.5em; /* Add space above button */
+  .nav.open {
+    display: flex;
+  }
+
+  .theme-toggle {
+    margin: 1em auto;
+    display: block;
+    text-align: center;
   }
 }
 </style>
