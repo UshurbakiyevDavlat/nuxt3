@@ -53,7 +53,7 @@ const currentPage = ref(1)
 
 // Computed property for filtered posts
 const filteredPosts = computed(() => {
-  return posts.value.filter((post) =>
+  return posts.value?.filter((post) =>
     post.title.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
     post.content.toLowerCase().includes(searchTerm.value.toLowerCase())
   )

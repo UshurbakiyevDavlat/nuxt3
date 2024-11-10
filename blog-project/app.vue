@@ -47,6 +47,8 @@ function toggleTheme() {
 function toggleMenu() {
   menuOpen.value = !menuOpen.value
 }
+
+provide('theme', theme)
 </script>
 
 <style scoped>
