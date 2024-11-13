@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Blog Posts</h1>
-    
+
     <input
       v-model="searchTerm"
       type="text"
@@ -9,7 +9,7 @@
       class="search-input"
     />
 
-    <div v-if="paginatedPosts.length">
+    <div v-if="paginatedPosts?.length">
       <ul>
         <li v-for="post in paginatedPosts" :key="post.slug" class="post-item">
           <nuxt-link :to="`/post/${post.slug}`">
@@ -60,11 +60,11 @@ const filteredPosts = computed(() => {
 const paginatedPosts = computed(() => {
   const start = (currentPage.value - 1) * postsPerPage
   const end = start + postsPerPage
-  return filteredPosts.value.slice(start, end)
+  return filteredPosts.value?.slice(start, end)
 })
 
 // Total pages
-const totalPages = computed(() => Math.ceil(filteredPosts.value.length / postsPerPage))
+const totalPages = computed(() => filteredPosts.value ? Math.ceil(filteredPosts.value.length / postsPerPage) : 1)
 
 // Methods to change pages
 function nextPage() {
