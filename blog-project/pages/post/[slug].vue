@@ -1,61 +1,78 @@
 <template>
     <div class="post-page" :class="theme">
-      <h1 class="post-title">{{ post.title }}</h1>
-      <div class="post-meta">
-        <p><strong>Author:</strong> {{ post.author }}</p>
-        <p><strong>Date:</strong> {{ post.date }}</p>
-      </div>
-      <div class="post-content">
-        <p v-for="(paragraph, index) in formattedContent" :key="index">{{ paragraph }}</p>
-      </div>
+      <div v-if="pending">Loading...</div>
+      <div v-else-if="postData">
+        <h1 class="post-title">{{ postData.title }}</h1>
+        <div class="post-meta">
+          <p><strong>Author:</strong> {{ postData.author }}</p>
+          <p><strong>Date:</strong> {{ postData.date }}</p>
+        </div>
+        <div class="post-content">
+          <p v-for="(paragraph, index) in formattedContent" :key="index">{{ paragraph }}</p>
+        </div>
   
-      <!-- Like Button -->
-      <button class="like-button" @click="toggleLike">
-        {{ isLiked ? 'Unlike' : 'Like' }} ({{ likes }})
-      </button>
+        <!-- Like Button -->
+        <button class="like-button" @click="toggleLike">
+          {{ isLiked ? 'Unlike' : 'Like' }} ({{ likes }})
+        </button>
   
-      <button class="back-button" @click="goBack">Back to Homepage</button>
+        <button class="back-button" @click="goBack">Back to Homepage</button>
+      </div>
+      <div v-else-if="error">Failed to load post: {{ error.message }}</div>
+      <div v-else>
+        <p>Post not found.</p>
+      </div>
     </div>
   </template>
   
   <script setup>
-  import { inject, ref } from 'vue'
-  import { useRoute, useRouter } from 'vue-router'
+  import { inject, ref, watchEffect } from 'vue'
+  import { useRoute } from 'vue-router'
   
   // Inject the theme
   const { theme } = inject('theme')
   
   // Route and post data
   const route = useRoute()
-  const router = useRouter()
-  const postFiles = import.meta.glob('@/data/posts.json', { eager: true })
-  const postsData = postFiles['/data/posts.json'].default
   const slug = route.params.slug
-  const post = postsData.find((p) => p.slug === slug)
-  const formattedContent = post ? post.content.split('\n\n') : []
+  
+  // Fetch the post by slug
+  const { data: post, pending, error } = useFetch(`http://localhost:3001/posts?slug=${slug}`)
+  const postData = ref(null)
+  const formattedContent = ref([])
+  
+  // Watch for data updates
+  watchEffect(() => {
+    if (post.value && post.value.length) {
+      postData.value = post.value[0]
+      formattedContent.value = postData.value.content.split('\n\n')
+    }
+  })
   
   // Like button state
   const isLiked = ref(false)
   const likes = ref(0)
   
   // Load likes from localStorage
-  if (post) {
-    const savedLikes = localStorage.getItem(`likes-${post.slug}`)
-    likes.value = savedLikes ? parseInt(savedLikes, 10) : 0
-  }
+  watchEffect(() => {
+    if (postData.value && process.client) {
+      const savedLikes = localStorage.getItem(`likes-${postData.value.slug}`)
+      likes.value = savedLikes ? parseInt(savedLikes, 10) : 0
+    }
+  })
   
   // Toggle like
   function toggleLike() {
     isLiked.value = !isLiked.value
     likes.value += isLiked.value ? 1 : -1
-    if (post) {
-      localStorage.setItem(`likes-${post.slug}`, likes.value)
+    if (postData.value) {
+      localStorage.setItem(`likes-${postData.value.slug}`, likes.value)
     }
   }
   
   // Back to homepage
   function goBack() {
-    router.push('/')
+    window.history.back()
   }
   </script>
   

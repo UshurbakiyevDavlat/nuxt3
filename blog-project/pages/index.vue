@@ -1,8 +1,7 @@
 <template>
   <div>
     <h1>Blog Posts</h1>
-
-    <!-- Search input to filter posts -->
+    
     <input
       v-model="searchTerm"
       type="text"
@@ -20,6 +19,9 @@
         </li>
       </ul>
     </div>
+
+    <div v-else-if="error">Failed to load post: {{ error.message }}</div>
+
     <div v-else>
       <p>No posts found.</p>
     </div>
@@ -35,17 +37,12 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useAsyncData } from 'nuxt/app'
-
-// Import the posts data
-const postFiles = import.meta.glob('@/data/posts.json', { eager: true })
-const postsData = postFiles['/data/posts.json'].default
 
 // Reactive search term
 const searchTerm = ref('')
 
-// Fetch posts
-const { data: posts } = useAsyncData('posts', () => postsData)
+// Fetch posts from the mock API
+const { data: posts, error } = useFetch('http://localhost:3001/posts')
 
 // Pagination state
 const postsPerPage = 5
